@@ -1,8 +1,9 @@
 <script>
   export let expense;
+  export let userEmail;
 </script>
 
-<li class="flex p-6 gap-5 bg-white first:rounded-t-2xl last:rounded-b-2xl">
+<li class="tracking-tight flex p-6 gap-5 bg-white first:rounded-t-2xl last:rounded-b-2xl">
   <div>
     <p class="text-center text-sm text-zinc-500 font-light">{new Date(expense.created_at).getDate()}</p>
     <p class="text-center text-sm text-zinc-500 font-light">{new Date(expense.created_at).toLocaleString("pt-BR", { month: "short" }).slice(0, -1)}</p>
@@ -12,7 +13,7 @@
   </div>
   <div class="grow">
     <p class="font-medium">{expense.name}</p>
-    <p class="text-sm text-zinc-500 font-light">{expense.paid_by.name}</p>
+    <p class="text-sm text-zinc-500 font-light">{userEmail === expense.paid_by.email ? "Você" : expense.paid_by.name}</p>
   </div>
-  <p class="text-right">{expense.amount?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
+  <p class="text-sm text-right">{expense.amount?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</p>
 </li>
