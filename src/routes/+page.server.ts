@@ -10,7 +10,17 @@ export const load: PageServerLoad = async (events) => {
     redirect(303, `/signin`)
   }
 
-  const { data } = await supabase.from("expenses").select(`id, name, amount, created_at, paid_by ( name ), category ( name, icon, color)`);
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
+
+  console.log(startOfMonth, endOfMonth);
+
+  const { data } = await supabase.from("expenses")
+                                 .select(`id, name, amount, created_at, paid_by ( name ), category ( name, icon, color)`)
+                                 .gte('created_at', startOfMonth)
+                                 .lte('created_at', endOfMonth)
+                                 .order('created_at', { ascending: false });
   
   return {
     session,

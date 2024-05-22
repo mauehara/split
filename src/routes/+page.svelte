@@ -16,7 +16,7 @@
     </Avatar.Root>
     <Button variant="outline" on:click={signOut}>Sair</Button>
   </header>
-  <ul>
+  <ul class="w-full max-w-lg ">
     {#each data.expenses as expense}
       <ExpenseList {expense} />
     {/each}

@@ -2,7 +2,7 @@
   export let expense;
 </script>
 
-<li class="flex p-6 gap-5 max-w-lg bg-white first:rounded-t-2xl last:rounded-b-2xl">
+<li class="flex p-6 gap-5 bg-white first:rounded-t-2xl last:rounded-b-2xl">
   <div>
     <p class="text-center text-sm text-zinc-500 font-light">{new Date(expense.created_at).getDate()}</p>
     <p class="text-center text-sm text-zinc-500 font-light">{new Date(expense.created_at).toLocaleString("pt-BR", { month: "short" }).slice(0, -1)}</p>
