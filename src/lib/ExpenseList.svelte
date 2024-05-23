@@ -4,7 +4,7 @@
 </script>
 
 <li class="tracking-tight flex p-6 gap-5 bg-white first:rounded-t-2xl last:rounded-b-2xl">
-  <div>
+  <div class="flex flex-col items-center justify-center">
     <p class="text-center text-sm text-zinc-500 font-light">{new Date(expense.created_at).getDate()}</p>
     <p class="text-center text-sm text-zinc-500 font-light">{new Date(expense.created_at).toLocaleString("pt-BR", { month: "short" }).slice(0, -1)}</p>
   </div>

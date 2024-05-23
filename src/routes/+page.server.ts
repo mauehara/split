@@ -1,6 +1,7 @@
 import { supabase } from "$lib/supabaseClient";
-import type { PageServerLoad } from "./$types"
+import type { PageServerLoad, Actions } from "./$types"
 import { redirect } from "@sveltejs/kit";
+import { formatToNumber } from 'simple-mask-money';
 
 export const load: PageServerLoad = async (events) => {
   const session = await events.locals.auth()
@@ -27,7 +28,7 @@ export const load: PageServerLoad = async (events) => {
     .order('created_at', { ascending: false });
   
   const myExpenses = await supabase.from("expenses").select('paid_by!inner (email), amount').eq('paid_by.email', session.user.email);
-  const myExpensesAmount = myExpenses.data.reduce((acc, expense) => acc + expense.amount, 0);
+  const myExpensesAmount = myExpenses.data.reduce((acc: number, expense: { amount: number; }) => acc + expense.amount, 0);
   const total = await supabase.from("expenses").select('amount.sum()');
   const balance = total.data[0].sum - 2 * myExpensesAmount;
   
@@ -37,3 +38,11 @@ export const load: PageServerLoad = async (events) => {
     expenses: expenses.data ?? [],
   };
 }
+
+export const actions = {
+	default: async ({ request }) => {
+		const data = await request.formData();
+    const amount = formatToNumber(data.get('amount'));
+    console.log(amount);
+	},
+} satisfies Actions;

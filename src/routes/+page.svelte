@@ -1,48 +1,64 @@
 <script>
+// @ts-nocheck
+
   import DollarSign from "lucide-svelte/icons/dollar-sign";
   import ExpenseList from '$lib/ExpenseList.svelte';
+  import SimpleMaskMoney, { setMask } from 'simple-mask-money';
   import { Button } from "$lib/components/ui/button";
+  import { Input } from "$lib/components/ui/input";
+  import { beforeUpdate, onMount } from "svelte";
   import * as Avatar from "$lib/components/ui/avatar";
   import * as Drawer from "$lib/components/ui/drawer";
 
   export let data;
+  let amountInput;
 
   $: balance = data.balance.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+  beforeUpdate(() => {
+    const input = document.querySelector('input[name="amount"]');
+    SimpleMaskMoney.setMask(input, {
+      allowNegative: false,
+      negativeSignAfter: false,
+      prefix: 'R$ ',
+      fixed: true,
+      fractionDigits: 2,
+      decimalSeparator: ',',
+      thousandsSeparator: '.',
+      cursor: 'end'
+    });
+  });
+  
 </script>
 
 <Drawer.Root>
   <Drawer.Trigger asChild let:builder>
-    <Button class="fixed bottom-2 right-2" builders={[builder]}>
+    <Button class="fixed bottom-4 right-4" builders={[builder]}>
       <DollarSign class="w-4 h-4 mr-2" />
       Adicionar
     </Button>
   </Drawer.Trigger>
   <Drawer.Content>
-    <div class="mx-auto w-full max-w-sm">
+    <form class="mx-auto w-full max-w-sm" method="POST">
       <Drawer.Header>
-        <Drawer.Title>Move Goal</Drawer.Title>
-        <Drawer.Description>Set your daily activity goal.</Drawer.Description>
+        <Drawer.Title>Nova despesa</Drawer.Title>
       </Drawer.Header>
-      <div class="p-4 pb-0">
-        <div class="flex items-center justify-center space-x-2">
-          <div class="flex-1 text-center">
-            <div class="text-7xl font-bold tracking-tighter">
-            </div>
-            <div class="text-[0.70rem] uppercase text-muted-foreground">
-              Calories/day
-            </div>
-          </div>
+      <div class="p-8">
+        <Input name="amount" bind:this={amountInput} type="text" inputmode="numeric" placeholder="0" class="text-center placeholder:text-zinc-300 tracking-tight text-4xl font-bold border-none max-w focus-visible:ring-0 focus-visible:ring-offset-0" />
+      </div>
+      <div class="p-4 pt-8 flex gap-2">
+        <div class={"h-12 w-12 rounded-xl flex justify-center items-center bg-green-50"}>
+          🥦
         </div>
-        <div class="mt-3 h-[120px]">
-        </div>
+        <Input type="text" placeholder="Café" class="rounded-xl h-12 placeholder:text-zinc-400 bg-zinc-50 border-none tracking-tight w-max grow" />
       </div>
       <Drawer.Footer>
-        <Button>Adicionar</Button>
+        <Button type="submit">Adicionar</Button>
         <Drawer.Close asChild let:builder>
           <Button builders={[builder]} variant="outline">Cancelar</Button>
         </Drawer.Close>
       </Drawer.Footer>
-    </div>
+    </form>
   </Drawer.Content>
 </Drawer.Root>
 
