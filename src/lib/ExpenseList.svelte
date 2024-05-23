@@ -8,7 +8,7 @@
     <p class="text-center text-sm text-zinc-500 font-light">{new Date(expense.created_at).getDate()}</p>
     <p class="text-center text-sm text-zinc-500 font-light">{new Date(expense.created_at).toLocaleString("pt-BR", { month: "short" }).slice(0, -1)}</p>
   </div>
-  <div class={"h-12 w-12 rounded-full flex justify-center items-center"} style={`background-color: ${expense.category.color}`}>
+  <div class={"h-12 w-12 rounded-xl flex justify-center items-center"} style={`background-color: ${expense.category.color}`}>
     {expense.category.icon}
   </div>
   <div class="grow">

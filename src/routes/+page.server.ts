@@ -27,15 +27,24 @@ export const load: PageServerLoad = async (events) => {
     .lte('created_at', endOfMonth)
     .order('created_at', { ascending: false });
   
-  const myExpenses = await supabase.from("expenses").select('paid_by!inner (email), amount').eq('paid_by.email', session.user.email);
+  const myExpenses = await supabase
+    .from("expenses")
+    .select('paid_by!inner (email), amount')
+    .eq('paid_by.email', session.user.email);
+  
   const myExpensesAmount = myExpenses.data.reduce((acc: number, expense: { amount: number; }) => acc + expense.amount, 0);
   const total = await supabase.from("expenses").select('amount.sum()');
   const balance = total.data[0].sum - 2 * myExpensesAmount;
+
+  const categories = await supabase
+    .from("categories")
+    .select('name, icon, color');
   
   return {
     session,
     balance,
     expenses: expenses.data ?? [],
+    categories: categories.data ?? [],
   };
 }
 
