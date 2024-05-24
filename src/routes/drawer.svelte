@@ -1,5 +1,5 @@
 <script lang="ts">
-  import DollarSign from "lucide-svelte/icons/dollar-sign";
+  import Plus from "lucide-svelte/icons/plus";
   import SimpleMaskMoney from 'simple-mask-money';
   import Loader from "lucide-svelte/icons/loader";
   import { afterUpdate, tick } from "svelte";
@@ -83,9 +83,8 @@
 
 <Drawer.Root shouldScaleBackground bind:open direction="top">
   <Drawer.Trigger asChild let:builder>
-    <Button class="fixed bottom-4 right-4" builders={[builder]}>
-      <DollarSign class="w-4 h-4 mr-2" />
-      Adicionar
+    <Button class="p-0 w-14 h-14 rounded-full fixed bottom-4 right-4 drop-shadow-lg" builders={[builder]}>
+      <Plus class="w-6 h-6" />
     </Button>
   </Drawer.Trigger>
   <Drawer.Content>

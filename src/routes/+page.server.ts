@@ -4,22 +4,19 @@ import { redirect } from "@sveltejs/kit";
 import { formatToNumber } from 'simple-mask-money';
 import { generateId } from '$lib/utils';
 
-export const load: PageServerLoad = async (events) => {
-  // const session = await events.locals.auth()
+const MAU_UEHARA_ID = '7vcwGPXwfJRvhOsE79zM';
+const LIA_SEGRE_ID = '8dBPvYahDhTfeCnyPgyo';
+const CATEGORIA_CREDITO_ID = 'pT8exg1yZKcJapX5xh9F';
 
-  // if (!session?.user?.name) {
-  //   redirect(303, `/signin`)
-  // }
-  const session = {
-    user: {
-      email: 'mau.uehara@gmail.com',
-      name: 'Mauricio Uehara',
-      image: 'https://lh3.googleusercontent.com/a-/AOh14Gg2tQK8ZvT0v9wZ1fLz9p5aZJX6hJv6Ql9v3oZw=s96-c',
-    }
-  };
+export const load: PageServerLoad = async (events) => {
+  const session = await events.locals.auth()
+
+  if (!session?.user?.name) {
+    redirect(303, `/signin`)
+  }
 
   const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth() - 1, 15).toISOString();
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
 
   const expenses = await supabase
@@ -40,9 +37,9 @@ export const load: PageServerLoad = async (events) => {
     .select('paid_by!inner (email), amount')
     .eq('paid_by.email', session.user.email);
   
-  const myExpensesAmount = myExpenses.data.reduce((acc: number, expense: { amount: number; }) => acc + expense.amount, 0);
+  const paidByUser = await supabase.from("sum_amount_by_email").select('*').eq('email', session.user.email);
   const total = await supabase.from("expenses").select('amount.sum()');
-  const balance = total.data[0].sum - 2 * myExpensesAmount;
+  const balance = paidByUser.data[0].sum - (total.data[0].sum / 2);
 
   const categories = await supabase
     .from("categories")
@@ -60,12 +57,12 @@ export const load: PageServerLoad = async (events) => {
 export const actions = {
 	add: async ({ request }) => {
 		const data = await request.formData();
-    const amount = formatToNumber(data.get('amount'));
     const name = data.get('name');
     const category = data.get('categoryId');
-    const paid_by = data.get('userEmail') === 'mau.uehara@gmail.com' ? '7vcwGPXwfJRvhOsE79zM' : '8dBPvYahDhTfeCnyPgyo';
+    const paid_by = data.get('userEmail') === 'mau.uehara@gmail.com' ? MAU_UEHARA_ID : LIA_SEGRE_ID;
     const id = generateId(20);
     const created_at = new Date().toISOString();
+    const amount = category === CATEGORIA_CREDITO_ID ? -formatToNumber(data.get('amount')) : formatToNumber(data.get('amount'));
 
     const { error } = await supabase
       .from('expenses')
@@ -101,9 +98,9 @@ export const actions = {
   update: async ({ request }) => {
     const data = await request.formData();
     const id = data.get('id');
-    const amount = formatToNumber(data.get('amount'));
     const name = data.get('name');
     const category = data.get('categoryId');
+    const amount = category === CATEGORIA_CREDITO_ID ? -formatToNumber(data.get('amount')) : formatToNumber(data.get('amount'));
     
     const { error } = await supabase
       .from("expenses")
