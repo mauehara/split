@@ -1,7 +1,9 @@
 <script lang="ts">
   import DollarSign from "lucide-svelte/icons/dollar-sign";
   import SimpleMaskMoney from 'simple-mask-money';
+  import Loader from "lucide-svelte/icons/loader";
   import { afterUpdate, tick } from "svelte";
+  import { enhance } from '$app/forms';
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
   import { fade } from 'svelte/transition';
@@ -14,12 +16,16 @@
   let showCategories = false;
   let formSelectedCategory = categories[0];
   let formAmountInput: HTMLInputElement | null = null;
+  let formNameInput: HTMLInputElement | null = null;
   let formAmount: string | null = null;
   let formAmountMemory: string | null = null;
+  let formNameMemory: string = "";
   let open = false;
+  let adding = false;
   
   afterUpdate(async () => {
     formAmountInput = document.querySelector('input[name="amount"]');
+    formNameInput = document.querySelector('input[name="name"]')
     if (formAmountInput) {
       SimpleMaskMoney.setMask(formAmountInput, {
         allowNegative: false,
@@ -36,10 +42,15 @@
         await tick();
         formAmountInput.value = formAmountMemory;
       }
+      if (formNameInput && formNameMemory) {
+        await tick();
+        formNameInput.value = formNameMemory;
+      }
     }
     if (!open) {
       formAmountMemory = null;
       formAmount = null;
+      formNameMemory = "";
       formSelectedCategory = categories[0];
       showCategories = false;
     }
@@ -47,12 +58,26 @@
 
   const handleShowCategories = () => {
     showCategories = true;
+    formNameInput = document.querySelector('input[name="name"]');
+
     if (formAmount !== "R$ 0,00") { formAmountMemory = formAmount; }
+    if (formNameInput) { formNameMemory = formNameInput.value; }
   }
 
   const handleCategorySelection = (category: any) => {
+    if (formNameInput) { formNameInput.value = formNameMemory; }
     formSelectedCategory = category;
     showCategories = false;
+  }
+
+  const handleAdd = () => {
+    adding = true;
+
+    return async ({ update }: {update: any}) => {
+      open = false;
+      await update();
+      adding = false;
+    };
   }
 </script>
 
@@ -65,7 +90,14 @@
   </Drawer.Trigger>
   <Drawer.Content>
     {#if !showCategories}
-    <form in:fade class="mx-auto w-full max-w-sm" method="POST" action="?/add" style={`display: ${showCategories ? "none" : "block"}`}>
+    <form 
+      in:fade 
+      class="mx-auto w-full max-w-sm" 
+      method="POST" 
+      action="?/add" 
+      style={`display: ${showCategories ? "none" : "block"}`}
+      use:enhance={handleAdd}
+    >
       <div class="p-8 pt-16">
         <Input name="amount" bind:this={amountInput} type="text" inputmode="numeric" class="text-center placeholder:text-zinc-300 tracking-tight text-4xl font-bold border-none max-w focus-visible:ring-0 focus-visible:ring-offset-0" />
       </div>
@@ -81,14 +113,19 @@
           </div>
         </button>
         <Input 
-          required 
+          required
           name="name" 
           type="text" 
           placeholder="Café" 
           class="text-base rounded-xl h-12 placeholder:text-zinc-400 bg-zinc-50 border-none tracking-tight w-max grow" />
       </div>
       <Drawer.Footer>
-        <Button type="submit">Adicionar</Button>
+        <Button disabled={adding} type="submit">
+          {#if adding}
+            <Loader class="w-4 h-4 mr-2 animate-[spin_1.5s_linear_infinite]" />
+          {/if}
+          Adicionar
+        </Button>
         <Drawer.Close asChild let:builder>
           <Button builders={[builder]} variant="outline">Cancelar</Button>
         </Drawer.Close>

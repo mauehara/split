@@ -3,7 +3,7 @@
   import SimpleMaskMoney from 'simple-mask-money';
   import Loader from "lucide-svelte/icons/loader";
   import { afterUpdate, tick } from "svelte";
-  import { enhance, applyAction } from '$app/forms';
+  import { enhance } from '$app/forms';
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
   import { fade } from 'svelte/transition';
