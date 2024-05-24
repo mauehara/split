@@ -1,6 +1,5 @@
 <script>
   import Drawer from './drawer.svelte';
-  import Dialog from './dialog.svelte';
   import ExpenseList from '$lib/ExpenseList.svelte';
   import * as Avatar from "$lib/components/ui/avatar";
 
@@ -10,10 +9,9 @@
   
 </script>
 
-<!-- <Dialog /> -->
-<Drawer categories={data.categories} userEmail={data.session.user?.email} />
+<Drawer categories={data.categories} userEmail={data.session.user?.email} expense={{}} />
 <main class="flex flex-col items-center bg-zinc-50" data-vaul-drawer-wrapper>
-  <header class="w-full p-10 pb-0 flex justify-between">
+  <header class="w-full p-4 pb-0 flex justify-between">
     <h1 class="mt-10 mb-0 scroll-m-20 text-md tracking-tight transition-colors first:mt-0">{`Olá, ${data.session.user?.name?.split(' ')[0]}`}</h1>
     <Avatar.Root>
       <Avatar.Image src={data.session.user?.image} alt="Foto de perfil" />
