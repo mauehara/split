@@ -2,6 +2,7 @@ import { supabase } from "$lib/supabaseClient";
 import type { PageServerLoad, Actions } from "./$types"
 import { redirect } from "@sveltejs/kit";
 import { formatToNumber } from 'simple-mask-money';
+import { generateId } from '$lib/utils';
 
 export const load: PageServerLoad = async (events) => {
   const session = await events.locals.auth()
@@ -21,7 +22,7 @@ export const load: PageServerLoad = async (events) => {
             amount, 
             created_at, 
             paid_by ( id, name, email ), 
-            category ( name, icon, color)`
+            category ( id, name, icon, color)`
           )
     .gte('created_at', startOfMonth)
     .lte('created_at', endOfMonth)
@@ -38,7 +39,7 @@ export const load: PageServerLoad = async (events) => {
 
   const categories = await supabase
     .from("categories")
-    .select('name, icon, color');
+    .select('id, name, icon, color');
   
   return {
     session,
@@ -52,6 +53,19 @@ export const actions = {
 	default: async ({ request }) => {
 		const data = await request.formData();
     const amount = formatToNumber(data.get('amount'));
-    console.log(amount);
+    const name = data.get('name');
+    const category = data.get('categoryId');
+    const paid_by = data.get('userEmail') === 'mau.uehara@gmail.com' ? '7vcwGPXwfJRvhOsE79zM' : '8dBPvYahDhTfeCnyPgyo';
+    const id = generateId(20);
+    const created_at = new Date().toISOString();
+
+    const { error } = await supabase
+      .from('expenses')
+      .insert({ id, amount, name, category, paid_by, created_at });
+    
+    if (error)
+      return { success: false, error: error.message };
+    else
+      return { success: true };
 	},
 } satisfies Actions;
