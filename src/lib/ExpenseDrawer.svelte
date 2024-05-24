@@ -15,15 +15,19 @@
 
   let amountInput;
   let showCategories = false;
-  let formSelectedCategory = categories[0];
+  let formSelectedCategory = expense.category || categories[0];
   let formAmountInput: HTMLInputElement | null = null;
+  let formNameInput: HTMLInputElement | null = null;
   let formAmount: string | null = null;
-  let formAmountMemory: string | null = null;
+  let formAmountMemory = expense.amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  let formNameMemory = expense.name;
   let open = false;
   let deleting = false;
-  
+
   afterUpdate(async () => {
     formAmountInput = document.querySelector('input[name="amount"]');
+    formNameInput = document.querySelector('input[name="name"]');
+
     if (formAmountInput) {
       SimpleMaskMoney.setMask(formAmountInput, {
         allowNegative: false,
@@ -40,11 +44,16 @@
         await tick();
         formAmountInput.value = formAmountMemory;
       }
+      if (formNameInput && formNameMemory) {
+        await tick();
+        formNameInput.value = formNameMemory;
+      }
     }
     if (!open) {
-      formAmountMemory = null;
+      formAmountMemory = expense.amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+      formNameMemory = expense.name;
       formAmount = null;
-      formSelectedCategory = categories[0];
+      formSelectedCategory = expense.category || categories[0];
       showCategories = false;
     }
   });
@@ -52,9 +61,12 @@
   const handleShowCategories = () => {
     showCategories = true;
     if (formAmount !== "R$ 0,00") { formAmountMemory = formAmount; }
+    if (formNameInput) { formNameMemory = formNameInput.value; }
   }
 
   const handleCategorySelection = (category: any) => {
+    if (formNameInput) { formNameInput.value = formNameMemory; }
+    
     formSelectedCategory = category;
     showCategories = false;
   }

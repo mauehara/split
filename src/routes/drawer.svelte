@@ -25,7 +25,7 @@
   
   afterUpdate(async () => {
     formAmountInput = document.querySelector('input[name="amount"]');
-    formNameInput = document.querySelector('input[name="name"]')
+    formNameInput = document.querySelector('input[name="name"]');
     if (formAmountInput) {
       SimpleMaskMoney.setMask(formAmountInput, {
         allowNegative: false,
@@ -58,7 +58,6 @@
 
   const handleShowCategories = () => {
     showCategories = true;
-    formNameInput = document.querySelector('input[name="name"]');
 
     if (formAmount !== "R$ 0,00") { formAmountMemory = formAmount; }
     if (formNameInput) { formNameMemory = formNameInput.value; }
@@ -66,6 +65,7 @@
 
   const handleCategorySelection = (category: any) => {
     if (formNameInput) { formNameInput.value = formNameMemory; }
+    
     formSelectedCategory = category;
     showCategories = false;
   }

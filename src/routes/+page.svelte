@@ -33,7 +33,7 @@
   </div>
   <ul class="w-full max-w-lg rounded-t-2xl overflow-hidden">
     {#each data.expenses as expense}
-      <ExpenseDrawer {expense} userEmail={data.session.user?.email} categories={data.categories} />
+      <ExpenseDrawer expense={expense} userEmail={data.session.user?.email} categories={data.categories} />
     {/each}
   </ul>
 </main>
