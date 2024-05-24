@@ -57,7 +57,7 @@ export const load: PageServerLoad = async (events) => {
 }
 
 export const actions = {
-	default: async ({ request }) => {
+	add: async ({ request }) => {
 		const data = await request.formData();
     const amount = formatToNumber(data.get('amount'));
     const name = data.get('name');
@@ -77,4 +77,23 @@ export const actions = {
     else
       return { success: true };
 	},
+
+  delete: async ({ request }) => {
+    const data = await request.formData();
+    const id = data.get('id');
+    
+    const { error } = await supabase
+      .from("expenses")
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.log('error', error);
+      return { success: false, error: error.message };
+    }
+    else {
+      console.log('success')
+      return { success: true };
+    }
+  },
 } satisfies Actions;

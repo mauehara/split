@@ -64,7 +64,7 @@
   </Drawer.Trigger>
   <Drawer.Content>
     {#if !showCategories}
-    <form in:fade class="mx-auto w-full max-w-sm" method="POST" style={`display: ${showCategories ? "none" : "block"}`}>
+    <form in:fade class="mx-auto w-full max-w-sm" method="POST" action="?/add" style={`display: ${showCategories ? "none" : "block"}`}>
       <div class="p-8 pt-16">
         <Input name="amount" bind:this={amountInput} type="text" inputmode="numeric" class="text-center placeholder:text-zinc-300 tracking-tight text-4xl font-bold border-none max-w focus-visible:ring-0 focus-visible:ring-offset-0" />
       </div>
@@ -79,7 +79,7 @@
             </svg>
           </div>
         </button>
-        <Input name="name" type="text" placeholder="Café" class="rounded-xl h-12 placeholder:text-zinc-400 bg-zinc-50 border-none tracking-tight w-max grow" />
+        <Input required name="name" type="text" placeholder="Café" class="rounded-xl h-12 placeholder:text-zinc-400 bg-zinc-50 border-none tracking-tight w-max grow" />
       </div>
       <Drawer.Footer>
         <Button type="submit">Adicionar</Button>

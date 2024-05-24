@@ -1,6 +1,6 @@
 <script>
   import Drawer from './drawer.svelte';
-  import ExpenseList from '$lib/ExpenseList.svelte';
+  import ExpenseDrawer from '$lib/ExpenseDrawer.svelte';
   import * as Avatar from "$lib/components/ui/avatar";
 
   export let data;
@@ -9,7 +9,7 @@
   
 </script>
 
-<Drawer categories={data.categories} userEmail={data.session.user?.email} expense={{}} />
+<Drawer categories={data.categories} userEmail={data.session.user?.email} />
 <main class="flex flex-col items-center bg-zinc-50" data-vaul-drawer-wrapper>
   <header class="w-full p-4 pb-0 flex justify-between">
     <h1 class="mt-10 mb-0 scroll-m-20 text-md tracking-tight transition-colors first:mt-0">{`Olá, ${data.session.user?.name?.split(' ')[0]}`}</h1>
@@ -31,9 +31,9 @@
       {/if}
     </div>
   </div>
-  <ul class="w-full max-w-lg ">
+  <ul class="w-full max-w-lg rounded-t-2xl overflow-hidden">
     {#each data.expenses as expense}
-      <ExpenseList {expense} userEmail={data.session.user?.email} />
+      <ExpenseDrawer {expense} userEmail={data.session.user?.email} categories={data.categories} />
     {/each}
   </ul>
 </main>
