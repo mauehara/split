@@ -23,6 +23,7 @@
   let formNameMemory = expense.name;
   let open = false;
   let deleting = false;
+  let updating = false;
 
   afterUpdate(async () => {
     formAmountInput = document.querySelector('input[name="amount"]');
@@ -75,9 +76,19 @@
     deleting = true;
 
     return async ({ update }: {update: any}) => {
-      await update();
       open = false;
+      await update();
       deleting = false;
+    };
+  }
+
+  const handleUpdate = () => {
+    updating = true;
+
+    return async ({ update }: {update: any}) => {
+      open = false;
+      await update();
+      updating = false;
     };
   }
 </script>
@@ -89,7 +100,13 @@
   <Drawer.Content>
     <div class="mx-auto w-full max-w-sm">
       {#if !showCategories}
-      <form in:fade method="POST" style={`display: ${showCategories ? "none" : "block"}`}>
+      <form 
+        in:fade 
+        method="POST" 
+        action="?/update"
+        style={`display: ${showCategories ? "none" : "block"}`}
+        use:enhance={handleUpdate}
+      >
         <div class="p-8 pt-16">
           <Input name="amount" bind:this={amountInput} type="text" inputmode="numeric" class="text-center placeholder:text-zinc-300 tracking-tight text-4xl font-bold border-none max-w focus-visible:ring-0 focus-visible:ring-offset-0" />
         </div>
@@ -115,8 +132,11 @@
           <Button 
             class="w-full" 
             type="submit"
-            disabled={deleting}
+            disabled={deleting || updating}
           >
+            {#if updating}
+              <Loader class="w-4 h-4 mr-2 animate-[spin_1.5s_linear_infinite]" />
+            {/if}
             Salvar alterações
           </Button>
         </div>
@@ -126,7 +146,7 @@
         <Button 
           class="w-full bg-red-50 text-red-700 border-[1px] border-red-200 hover:bg-red-100" 
           type="submit"
-          disabled={deleting}
+          disabled={deleting || updating}
         >
           {#if deleting}
             <Loader class="w-4 h-4 mr-2 animate-[spin_1.5s_linear_infinite]" />

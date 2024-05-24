@@ -97,4 +97,26 @@ export const actions = {
       return { success: true };
     }
   },
+
+  update: async ({ request }) => {
+    const data = await request.formData();
+    const id = data.get('id');
+    const amount = formatToNumber(data.get('amount'));
+    const name = data.get('name');
+    const category = data.get('categoryId');
+    
+    const { error } = await supabase
+      .from("expenses")
+      .update({ amount, name, category })
+      .eq('id', id);
+
+    if (error) {
+      console.log('error', error);
+      return { success: false, error: error.message };
+    }
+    else {
+      console.log('success')
+      return { success: true };
+    }
+  },
 } satisfies Actions;
