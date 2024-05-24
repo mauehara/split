@@ -1,7 +1,9 @@
 <script lang="ts">
   import ExpenseList from "$lib/ExpenseList.svelte";
   import SimpleMaskMoney from 'simple-mask-money';
+  import Loader from "lucide-svelte/icons/loader";
   import { afterUpdate, tick } from "svelte";
+  import { enhance, applyAction } from '$app/forms';
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
   import { fade } from 'svelte/transition';
@@ -18,6 +20,7 @@
   let formAmount: string | null = null;
   let formAmountMemory: string | null = null;
   let open = false;
+  let deleting = false;
   
   afterUpdate(async () => {
     formAmountInput = document.querySelector('input[name="amount"]');
@@ -42,6 +45,7 @@
       formAmountMemory = null;
       formAmount = null;
       formSelectedCategory = categories[0];
+      showCategories = false;
     }
   });
 
@@ -50,9 +54,19 @@
     if (formAmount !== "R$ 0,00") { formAmountMemory = formAmount; }
   }
 
-  const handleCategorySelection = category => {
+  const handleCategorySelection = (category: any) => {
     formSelectedCategory = category;
     showCategories = false;
+  }
+
+  const handleDelete = () => {
+    deleting = true;
+
+    return async ({ update }: {update: any}) => {
+      await update();
+      open = false;
+      deleting = false;
+    };
   }
 </script>
 
@@ -70,7 +84,7 @@
         <div class="p-4 flex gap-2">
           <input type="hidden" name="categoryId" value={formSelectedCategory.id} />
           <input type="hidden" name="id" value={expense.id} />
-          <button on:click={handleShowCategories} class={"relative h-12 w-12 rounded-xl flex justify-center items-center"} style={`background-color: ${formSelectedCategory.color}`}>
+          <button on:click={handleShowCategories} class={"text-xl relative h-12 w-12 rounded-xl flex justify-center items-center"} style={`background-color: ${formSelectedCategory.color}`}>
             {formSelectedCategory.icon}
             <div class="-bottom-px right-px absolute bg-white rounded-full p-1">
               <svg class="h-2 w-2 fill-zinc-800" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" xml:space="preserve">
@@ -78,15 +92,35 @@
               </svg>
             </div>
           </button>
-          <Input name="name" type="text" placeholder="Café" class="rounded-xl h-12 placeholder:text-zinc-400 bg-zinc-50 border-none tracking-tight w-max grow" />
+          <Input 
+            required
+            name="name" 
+            type="text" 
+            placeholder="Café" 
+            class="text-base rounded-xl h-12 placeholder:text-zinc-400 bg-zinc-50 border-none tracking-tight w-max grow" />
         </div>
         <div class="px-4 pt-4">
-          <Button class="w-full" type="submit">Salvar alterações</Button>
+          <Button 
+            class="w-full" 
+            type="submit"
+            disabled={deleting}
+          >
+            Salvar alterações
+          </Button>
         </div>
       </form>
-      <form class="px-4 pt-2" method="POST" action="?/delete">
+      <form class="px-4 pt-2" method="POST" action="?/delete" use:enhance={handleDelete}>
         <input type="hidden" name="id" value={expense.id} />
-        <Button class="w-full bg-red-50 text-red-700 border-[1px] border-red-200 hover:bg-red-100" type="submit">Apagar</Button>
+        <Button 
+          class="w-full bg-red-50 text-red-700 border-[1px] border-red-200 hover:bg-red-100" 
+          type="submit"
+          disabled={deleting}
+        >
+          {#if deleting}
+            <Loader class="w-4 h-4 mr-2 animate-[spin_1.5s_linear_infinite]" />
+          {/if}
+          Apagar
+        </Button>
       </form>  
       <div class="px-4 pt-2 pb-8">
         <Drawer.Close asChild let:builder>
@@ -97,8 +131,12 @@
         <ul in:fade class="flex gap-2 p-4 py-12 flex-wrap mx-auto w-full max-w-sm">
           {#each categories as category}
             <li>
-              <button on:click={() => handleCategorySelection(category)} class="h-12 w-12 rounded-xl flex justify-center items-center" style={`background-color: ${category.color}`}>
-                {category.icon}
+              <button 
+                on:click={() => handleCategorySelection(category)} 
+                class="gap-2 text-xl h-20 w-20 rounded-xl flex flex-col justify-center items-center" 
+                style={`background-color: ${category.color}`}>
+                  {category.icon}
+                <span class="text-xs tracking-tight">{category.name}</span>
               </button>
             </li>
           {/each}

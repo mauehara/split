@@ -46,7 +46,8 @@ export const load: PageServerLoad = async (events) => {
 
   const categories = await supabase
     .from("categories")
-    .select('id, name, icon, color');
+    .select('id, name, icon, color')
+    .order('name');
   
   return {
     session,

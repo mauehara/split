@@ -41,6 +41,7 @@
       formAmountMemory = null;
       formAmount = null;
       formSelectedCategory = categories[0];
+      showCategories = false;
     }
   });
 
@@ -49,7 +50,7 @@
     if (formAmount !== "R$ 0,00") { formAmountMemory = formAmount; }
   }
 
-  const handleCategorySelection = category => {
+  const handleCategorySelection = (category: any) => {
     formSelectedCategory = category;
     showCategories = false;
   }
@@ -79,7 +80,12 @@
             </svg>
           </div>
         </button>
-        <Input required name="name" type="text" placeholder="Café" class="rounded-xl h-12 placeholder:text-zinc-400 bg-zinc-50 border-none tracking-tight w-max grow" />
+        <Input 
+          required 
+          name="name" 
+          type="text" 
+          placeholder="Café" 
+          class="text-base rounded-xl h-12 placeholder:text-zinc-400 bg-zinc-50 border-none tracking-tight w-max grow" />
       </div>
       <Drawer.Footer>
         <Button type="submit">Adicionar</Button>
@@ -92,8 +98,12 @@
       <ul in:fade class="flex gap-2 p-4 py-12 flex-wrap mx-auto w-full max-w-sm">
         {#each categories as category}
           <li>
-            <button on:click={() => handleCategorySelection(category)} class="h-12 w-12 rounded-xl flex justify-center items-center" style={`background-color: ${category.color}`}>
-              {category.icon}
+            <button 
+              on:click={() => handleCategorySelection(category)} 
+              class="gap-2 text-xl h-20 w-20 rounded-xl flex flex-col justify-center items-center" 
+              style={`background-color: ${category.color}`}>
+                {category.icon}
+                <span class="text-xs tracking-tight">{category.name}</span>
             </button>
           </li>
         {/each}
