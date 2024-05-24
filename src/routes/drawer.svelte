@@ -55,7 +55,7 @@
   }
 </script>
 
-<Drawer.Root shouldScaleBackground bind:open>
+<Drawer.Root shouldScaleBackground bind:open direction="top">
   <Drawer.Trigger asChild let:builder>
     <Button class="fixed bottom-4 right-4" builders={[builder]}>
       <DollarSign class="w-4 h-4 mr-2" />
@@ -68,7 +68,7 @@
       <div class="p-8 pt-16">
         <Input name="amount" bind:this={amountInput} type="text" inputmode="numeric" class="text-center placeholder:text-zinc-300 tracking-tight text-4xl font-bold border-none max-w focus-visible:ring-0 focus-visible:ring-offset-0" />
       </div>
-      <div class="p-4 pt-8 flex gap-2">
+      <div class="p-4 flex gap-2">
         <input type="hidden" name="categoryId" value={formSelectedCategory.id} />
         <input type="hidden" name="userEmail" value={userEmail} />
         <button on:click={handleShowCategories} class={"relative h-12 w-12 rounded-xl flex justify-center items-center"} style={`background-color: ${formSelectedCategory.color}`}>

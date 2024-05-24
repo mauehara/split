@@ -1,5 +1,6 @@
 <script>
   import Drawer from './drawer.svelte';
+  import Dialog from './dialog.svelte';
   import ExpenseList from '$lib/ExpenseList.svelte';
   import * as Avatar from "$lib/components/ui/avatar";
 
@@ -9,6 +10,7 @@
   
 </script>
 
+<!-- <Dialog /> -->
 <Drawer categories={data.categories} userEmail={data.session.user?.email} />
 <main class="flex flex-col items-center bg-zinc-50" data-vaul-drawer-wrapper>
   <header class="w-full p-10 pb-0 flex justify-between">
