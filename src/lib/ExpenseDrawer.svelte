@@ -121,7 +121,8 @@
               </svg>
             </div>
           </button>
-          <Input 
+          <Input
+            data-1p-ignore
             required
             name="name" 
             type="text" 
