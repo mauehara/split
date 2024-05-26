@@ -1,5 +1,5 @@
-import { supabase } from "$lib/supabaseClient";
 import type { PageServerLoad, Actions } from "./$types"
+import { supabase } from "$lib/supabaseClient";
 import { redirect } from "@sveltejs/kit";
 import { formatToNumber } from 'simple-mask-money';
 import { generateId } from '$lib/utils';
@@ -31,6 +31,10 @@ export const load: PageServerLoad = async (events) => {
     .gte('created_at', startOfMonth)
     .lte('created_at', endOfMonth)
     .order('created_at', { ascending: false });
+
+  const allExpenses = await supabase
+    .from("expenses")
+    .select(`name, category`)
   
   const myExpenses = await supabase
     .from("expenses")
@@ -49,6 +53,7 @@ export const load: PageServerLoad = async (events) => {
   return {
     session,
     balance,
+    allExpenses: allExpenses.data ?? [],
     expenses: expenses.data ?? [],
     categories: categories.data ?? [],
   };

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Fuse from 'fuse.js';
   import Plus from "lucide-svelte/icons/plus";
   import SimpleMaskMoney from 'simple-mask-money';
   import Loader from "lucide-svelte/icons/loader";
@@ -11,6 +12,7 @@
 
   export let categories;
   export let userEmail;
+  export let allExpenses;
 
   let amountInput;
   let showCategories = false;
@@ -79,6 +81,22 @@
       adding = false;
     };
   }
+
+  const handleNameInput = (e: InputEvent) => {
+    const query = (e.target as HTMLInputElement).value;
+    const options = {
+      includeScore: true,
+      keys: ['name'],
+      minMatchCharLength: 4,
+      ignoreLocation: true,
+    }
+    const fuse = new Fuse(allExpenses, options)
+    const result = fuse.search(query)
+    if (result.length > 0) {
+      const suggestedCategoryId = (result[0].item as any).category;
+      formSelectedCategory = categories.find((category: any) => category.id === suggestedCategoryId);
+    }
+  }
 </script>
 
 <Drawer.Root shouldScaleBackground bind:open direction="top">
@@ -117,6 +135,7 @@
           name="name" 
           type="text" 
           placeholder="Café" 
+          on:input={handleNameInput}
           class="text-base rounded-xl h-12 placeholder:text-zinc-400 bg-zinc-50 border-none tracking-tight w-max grow" />
       </div>
       <Drawer.Footer>
