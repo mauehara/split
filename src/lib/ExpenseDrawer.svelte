@@ -26,23 +26,26 @@
   let open = false;
   let deleting = false;
   let updating = false;
+  let moneyMaskIsSet: (() => void) | undefined;
 
   afterUpdate(async () => {
     formAmountInput = document.querySelector('input[name="amount"]');
     formNameInput = document.querySelector('input[name="name"]');
 
     if (formAmountInput) {
-      SimpleMaskMoney.setMask(formAmountInput, {
-        allowNegative: false,
-        negativeSignAfter: false,
-        prefix: 'R$ ',
-        fixed: true,
-        fractionDigits: 2,
-        decimalSeparator: ',',
-        thousandsSeparator: '.',
-        cursor: 'end',
-        afterFormat(e: string) { formAmount = e },
-      });
+      if (moneyMaskIsSet === undefined) {
+        moneyMaskIsSet = SimpleMaskMoney.setMask(formAmountInput, {
+          allowNegative: false,
+          negativeSignAfter: false,
+          prefix: 'R$ ',
+          fixed: true,
+          fractionDigits: 2,
+          decimalSeparator: ',',
+          thousandsSeparator: '.',
+          cursor: 'end',
+          afterFormat(e: string) { formAmount = e },
+        });
+      }
       if (formAmountMemory) {
         await tick();
         formAmountInput.value = formAmountMemory;
@@ -58,6 +61,7 @@
       formAmount = null;
       formSelectedCategory = expense.category || categories[0];
       showCategories = false;
+      moneyMaskIsSet = undefined;
     }
   });
 
