@@ -16,7 +16,7 @@ export const load: PageServerLoad = async (events) => {
   }
 
   const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth() - 1, 15).toISOString();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth() - 1, 25).toISOString();
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
 
   const expenses = await supabase
@@ -36,11 +36,6 @@ export const load: PageServerLoad = async (events) => {
     .from("expenses")
     .select(`name, category`)
   
-  const myExpenses = await supabase
-    .from("expenses")
-    .select('paid_by!inner (email), amount')
-    .eq('paid_by.email', session.user.email);
-  
   const paidByUser = await supabase.from("sum_amount_by_email").select('*').eq('email', session.user.email);
   const total = await supabase.from("expenses").select('amount.sum()');
   const balance = paidByUser.data[0].sum - (total.data[0].sum / 2);
@@ -53,9 +48,9 @@ export const load: PageServerLoad = async (events) => {
   return {
     session,
     balance,
-    allExpenses: allExpenses.data ?? [],
     expenses: expenses.data ?? [],
-    categories: categories.data ?? [],
+    categories: await categories.data ?? [],
+    allExpenses: await allExpenses.data ?? [],
   };
 }
 
