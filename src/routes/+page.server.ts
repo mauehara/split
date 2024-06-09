@@ -48,9 +48,11 @@ export const load: PageServerLoad = async (events) => {
   return {
     session,
     balance,
-    expenses: expenses.data ?? [],
-    categories: await categories.data ?? [],
-    allExpenses: await allExpenses.data ?? [],
+    stream: {
+      expenses: expenses.data ?? [],
+      categories: categories.data ?? [],
+      allExpenses:  allExpenses.data ?? [],
+    }
   };
 }
 

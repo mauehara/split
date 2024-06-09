@@ -9,7 +9,7 @@
   
 </script>
 
-<Drawer allExpenses={data.allExpenses} categories={data.categories} userEmail={data.session.user?.email} />
+<Drawer allExpenses={data.stream.allExpenses} categories={data.stream.categories} userEmail={data.session.user?.email} />
 <main class="flex flex-col items-center bg-zinc-50" data-vaul-drawer-wrapper>
   <header class="w-full p-4 pb-0 flex justify-between">
     <h1 class="mt-10 mb-0 scroll-m-20 text-md tracking-tight transition-colors first:mt-0">{`Olá, ${data.session.user?.name?.split(' ')[0]}`}</h1>
@@ -32,8 +32,12 @@
     </div>
   </div>
   <ul class="w-full max-w-lg rounded-t-2xl overflow-hidden">
-    {#each data.expenses as expense}
-      <ExpenseDrawer allExpenses={data.allExpenses} expense={expense} userEmail={data.session.user?.email} categories={data.categories} />
-    {/each}
+    {#await data.stream.expenses}
+      <p class="text-center">Carregando...</p>
+    {:then expenses}   
+      {#each expenses as expense}
+        <ExpenseDrawer allExpenses={data.stream.allExpenses} expense={expense} userEmail={data.session.user?.email} categories={data.stream.categories} />
+      {/each}
+    {/await}
   </ul>
 </main>
