@@ -19,9 +19,6 @@ export const load: PageServerLoad = async (events) => {
   const startOfMonth = new Date(now.getFullYear(), now.getMonth() - 1, 25).toISOString();
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();
 
-  console.log('startOfMonth', startOfMonth);
-  console.log('endOfMonth', endOfMonth);
-
   const expenses = await supabase
     .from("expenses")
     .select(`id, 
